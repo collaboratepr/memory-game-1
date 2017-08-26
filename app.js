@@ -60,14 +60,9 @@ var memoryController = (function() {
             shuffleTitleImagesArray();
 
             // 2. Create cards objects array
-            for (var i = 0; i < data.gameBoardTitleImages.length; i++) {
-                var imageNameArr, imageTitle;
-
-                imageNameArr = data.gameBoardTitleImages[i].split(".");
-                imageTitle = imageNameArr[0];
-
-                data.cards.push(new Card("image-" + (i + 1), data.gameBoardTitleImages[i]));
-            }
+            data.cards = data.gameBoardTitleImages.map(function (image, index) {
+                return new Card("image-" + (index + 1), image);
+            });
         },
 
         showCard: function(id) {
