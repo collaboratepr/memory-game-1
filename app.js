@@ -36,12 +36,7 @@ var memoryController = (function() {
         },
 
         get isViewed() {
-            if (this.viewed) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return this.viewed;
         }
     };
 
