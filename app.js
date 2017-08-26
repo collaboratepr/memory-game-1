@@ -2,6 +2,7 @@
 var memoryController = (function() {
     var data = {
         titleImages : ["image1.png", "image2.png", "image3.png", "image4.png", "image5.png", "image6.png"],
+        gameBoardTitleImages : [],
         cards: [],
         cardsFlippedOver: 0,
         lastCardViewed: -1,
@@ -14,16 +15,13 @@ var memoryController = (function() {
         totalScore: 100
     };
 
-    var shuffleArray = function (originArr) {
-
-
-        for (var c = originArr.length - 1; c > 0; c--) {
+    var shuffleTitleImagesArray = function () {
+        for (var c = data.gameBoardTitleImages.length - 1; c > 0; c--) {
             var b = Math.floor(Math.random() * (c + 1));
-            var a = originArr[c];
-            originArr[c] = originArr[b];
-            originArr[b] = a;
+            var a = data.gameBoardTitleImages[c];
+            data.gameBoardTitleImages[c] = data.gameBoardTitleImages[b];
+            data.gameBoardTitleImages[b] = a;
         }
-        return originArr;
     };
 
     var Card = function(imageName, imageSrc) {
@@ -60,18 +58,18 @@ var memoryController = (function() {
             var gameBoardTitleImages;
 
             // 1. Create solution array
-            gameBoardTitleImages = data.titleImages.concat(data.titleImages);
+            data.gameBoardTitleImages = data.titleImages.concat(data.titleImages);
 
-            shuffleArray(gameBoardTitleImages);
+            shuffleTitleImagesArray();
 
             // 2. Create cards objects array
-            for (var i = 0; i < gameBoardTitleImages.length; i++) {
+            for (var i = 0; i < data.gameBoardTitleImages.length; i++) {
                 var imageNameArr, imageTitle;
 
-                imageNameArr = gameBoardTitleImages[i].split(".");
+                imageNameArr = data.gameBoardTitleImages[i].split(".");
                 imageTitle = imageNameArr[0];
 
-                data.cards.push(new Card("image-" + (i + 1), gameBoardTitleImages[i]));
+                data.cards.push(new Card("image-" + (i + 1), data.gameBoardTitleImages[i]));
             }
         },
 
