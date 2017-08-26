@@ -30,16 +30,18 @@ var memoryController = (function() {
         this.viewed = false;
     };
 
-    Card.prototype.setViewed = function () {
-        this.viewed = true;
-    };
+    Card.prototype = {
+        get setViewed() {
+            this.viewed = true;
+        },
 
-    Card.prototype.isViewed = function () {
-        if (this.viewed) {
-            return true;
-        }
-        else {
-            return false;
+        get isViewed() {
+            if (this.viewed) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     };
 
@@ -48,8 +50,8 @@ var memoryController = (function() {
         data.countViewed++;
 
         // 2. Set true equal images viewed property
-        data.flipArray[0].setViewed();
-        data.flipArray[1].setViewed();
+        data.flipArray[0].setViewed;
+        data.flipArray[1].setViewed;
     };
 
 
@@ -75,7 +77,7 @@ var memoryController = (function() {
 
         showCard: function(id) {
             // Check if not more that two cards were viewed and image has not clicked twice
-            if (data.cardsFlippedOver < 2 && id != data.lastCardViewed && !(data.cards[id - 1]).isViewed()) {
+            if (data.cardsFlippedOver < 2 && id != data.lastCardViewed && !(data.cards[id - 1]).isViewed) {
                 data.cardsFlippedOver++;
                 // Array starts from zero
                 data.flipArray.push(data.cards[id - 1]);
