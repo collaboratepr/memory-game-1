@@ -67,7 +67,11 @@ var memoryController = (function() {
 
         showCard: function(id) {
             // Check if not more that two cards were viewed and image has not clicked twice
-            if (data.cardsFlippedOver < 2 && id != data.lastCardViewed && !(data.cards[id - 1]).isViewed) {
+            var cardsFlippedUnderTwoCards = data.cardsFlippedOver < 2,
+                isLastViewedCard = id != data.lastCardViewed,
+                allowedToView = !(data.cards[id - 1]).isViewed;
+
+            if (cardsFlippedUnderTwoCards && isLastViewedCard && allowedToView) {
                 data.cardsFlippedOver++;
                 // Array starts from zero
                 data.flipArray.push(data.cards[id - 1]);
