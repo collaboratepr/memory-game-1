@@ -15,14 +15,16 @@ var memoryController = (function() {
         totalScore: 100
     };
 
-    var shuffleTitleImagesArray = function () {
-        for (var c = data.gameBoardTitleImages.length - 1; c > 0; c--) {
+    function shuffleTitleImagesArray(originArr) {
+        var newArray = originArr.slice(0); //copy of old array
+        for (var c = 0; c < newArray.length; c++) {
             var b = Math.floor(Math.random() * (c + 1));
-            var a = data.gameBoardTitleImages[c];
-            data.gameBoardTitleImages[c] = data.gameBoardTitleImages[b];
-            data.gameBoardTitleImages[b] = a;
+            var a = newArray[c];
+            newArray[c] = newArray[b];
+            newArray[b] = a;
         }
-    };
+        return newArray;
+    }
 
     var Card = function(imageName, imageSrc) {
         this.name = imageName;
@@ -52,15 +54,15 @@ var memoryController = (function() {
 
     return {
         createGameBoardCards: function() {
-            var gameBoardTitleImages;
+            var gameBoardTitleImages, shuffledArray;
 
             // 1. Create solution array
             data.gameBoardTitleImages = data.titleImages.concat(data.titleImages);
 
-            shuffleTitleImagesArray();
+            shuffledArray = shuffleTitleImagesArray(data.gameBoardTitleImages); //old array is unchanged, we created new shuffled array based on unput of our shuffle function
 
             // 2. Create cards objects array
-            data.cards = data.gameBoardTitleImages.map(function (image, index) {
+            data.cards = shuffledArray.map(function (image, index) {
                 return new Card("image-" + (index + 1), image);
             });
         },
