@@ -152,7 +152,8 @@ var UIController = (function() {
         gameTime: "game-time",
         card: "<div class='col-lg-2 col-md-3 col-xs-4 game-tile'><div class='game-tile-inside'>" +
         "<img src='img/happy.png' class='flip-image' id='image-%id%'/>"+
-        "</div></div>"
+        "</div></div>",
+        timeDelimiter: ":"
     };
 
     return {
@@ -297,9 +298,11 @@ var projectController = (function(memCtrl, UICtrl) {
             }
         }
 
-        var formatTime = (time.hours ? (time.hours > 9 ? time.hours : "0" + time.hours) : "00") + ":" +
-            (time.minutes ? (time.minutes > 9 ? time.minutes : "0" + time.minutes) : "00") + ":" +
-            (time.seconds > 9 ? time.seconds : "0" + time.seconds);
+        var timeHours = (time.hours ? (time.hours > 9 ? time.hours : "0" + time.hours) : "00"),
+            timeMinutes = (time.minutes ? (time.minutes > 9 ? time.minutes : "0" + time.minutes) : "00"),
+            timeSecond = (time.seconds > 9 ? time.seconds : "0" + time.seconds),
+
+            formatTime = timeHours + DOM.timeDelimiter + timeMinutes + DOM.timeDelimiter + timeSecond;
 
         UICtrl.displayTime(formatTime);
 
