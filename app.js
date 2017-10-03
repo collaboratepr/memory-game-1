@@ -70,7 +70,7 @@ var memoryController = (function() {
         showCard: function(id) {
             // Check if not more that two cards were viewed and image has not clicked twice
             var cardsFlippedUnderTwoCards = data.cardsFlippedOver < 2,
-                isLastViewedCard = id != data.lastCardViewed,
+                isLastViewedCard = id !== data.lastCardViewed,
                 allowedToView = !(data.cards[id - 1]).isViewed;
 
             if (cardsFlippedUnderTwoCards && isLastViewedCard && allowedToView) {
@@ -104,7 +104,7 @@ var memoryController = (function() {
 
         checkCardsAreEqual: function() {
             // Checking for are two cards equal
-            if (data.flipArray[0].src == data.flipArray[1].src) {
+            if (data.flipArray[0].src === data.flipArray[1].src) {
                 updateViewed();
                 this.resetFlip();
                 return true;
@@ -116,7 +116,7 @@ var memoryController = (function() {
         },
 
         checkGameIsFinished: function() {
-            if (data.titleImages.length == data.countViewed) {
+            if (data.titleImages.length === data.countViewed) {
                 data.gameIsFinished = true;
             }
         },
@@ -162,10 +162,12 @@ var UIController = (function() {
             var cardsHTML = "", newCard, index;
 
             // 1. Create cards
-            for (var i in cards) {
-                index = String(parseInt(i) + 1);
-                newCard = DOMStrings.card.replace("%id%", index);
-                cardsHTML += newCard;
+            for (var i in cards) {                
+                if ( ({}).hasOwnProperty.call(cards, i) ) {
+                    index = String(parseInt(i) + 1);
+                    newCard = DOMStrings.card.replace("%id%", index);
+                    cardsHTML += newCard;
+                }
             }
 
             // 2. Add cards to UI
@@ -214,120 +216,10 @@ var projectController = (function(memCtrl, UICtrl) {
 
     var gameBoardData = memCtrl.getData();
 
-    var eventHandler = function() {
-
-        window.addEventListener("load", function () {
-            // 1. Create cards data
-            memCtrl.createGameBoardCards();
-
-            // 2. Add cards to the UI
-            UICtrl.displayGameBoardCards(memCtrl.getGameBoardCards());
-
-            // 3. Set message
-            setGameMessage("Click a tile to start");
-        });
-
-        // When each card was clicked
-        document.getElementById(DOM.gameBoard).addEventListener("click", function(event) {
-
-            if (event.target.nodeName === "IMG" && !gameBoardData.gameIsFinished) {
-                // 1. Get card id
-                var cardId = event.target.id.split("-");
-
-                var ID = cardId[1];
-
-                // 2. Update the card image in UI
-                var imageToShow = memCtrl.showCard(ID);
-
-                // We allowed to see just two images each time
-                if (!isNaN(imageToShow) && imageToShow != "") {
-                    // Our data arrays starts from zero
-                    UICtrl.displayCardImage(imageToShow, gameBoardData.cards[imageToShow - 1].src);
-                }
-
-                // Two cards were selected
-                else if (gameBoardData.flipArray.length == 2) {
-                    checkTwoCards();
-                }
-            }
-        });
-
-        // When reset button was clicked
-        document.getElementById(DOM.resetBtnContainer).addEventListener("click", function() {
-            // 1. Reset game score and isFinished variable
-            memCtrl.resetGame();
-
-            // 2. Reset and start Calculating time
-            resetTime();
-
-            calcTime();
-
-            // 3. Create cards data
-            memCtrl.createGameBoardCards();
-
-            // 4. Add cards to the UI
-            UICtrl.displayGameBoardCards(memCtrl.getGameBoardCards());
-
-            // 5. Set message
-            setGameMessage("Click a tile to start");
-        });
-    };
-
-    var resetTime = function () {
-        clearInterval(fullTime);
-        time = {
-            hours: 0,
-            minutes: 0,
-            seconds: 0
-        };
-    };
-
-    var addTime = function() {
-        memCtrl.setScore();
-        time.seconds++;
-
-        if (time.seconds >= 60) {
-            time.seconds = 0;
-
-            time.minutes++;
-
-            if (time.minutes >= 60) {
-                time.minutes = 0;
-
-                time.hours++;
-            }
-        }
-
-        var timeHours = (time.hours ? (time.hours > 9 ? time.hours : "0" + time.hours) : "00"),
-            timeMinutes = (time.minutes ? (time.minutes > 9 ? time.minutes : "0" + time.minutes) : "00"),
-            timeSecond = (time.seconds > 9 ? time.seconds : "0" + time.seconds),
-
-            formatTime = timeHours + DOM.timeDelimiter + timeMinutes + DOM.timeDelimiter + timeSecond;
-
-        UICtrl.displayTime(formatTime);
-
-        calcTime();
-    };
-
-    var calcTime = function() {
-        fullTime = setTimeout(addTime, 1000);
-    };
-
     var setGameMessage = function (message) {
         UICtrl.setMessage(message);
         UICtrl.setButtonText("Restart Game");
         clearInterval(gameBoardData.messageTimer);
-    };
-
-    var hideCards = function() {
-        if(gameBoardData.timerReset == 1) {
-            // 1. Hide cards image in the UI and set it the default
-            UICtrl.hideCardImage(gameBoardData.flipArray[0].name);
-            UICtrl.hideCardImage(gameBoardData.flipArray[1].name);
-
-            // 2. Reset flip array
-            memCtrl.resetFlip();
-        }
     };
 
     var checkTwoCards = function () {
@@ -361,6 +253,116 @@ var projectController = (function(memCtrl, UICtrl) {
             resetTime();
         }
     };
+
+    var resetTime = function () {
+        clearInterval(fullTime);
+        time = {
+            hours: 0,
+            minutes: 0,
+            seconds: 0
+        };
+    };
+
+    var calcTime = function() {
+        fullTime = setTimeout(addTime, 1000);
+    };
+
+    var eventHandler = function() {
+
+        window.addEventListener("load", function () {
+            // 1. Create cards data
+            memCtrl.createGameBoardCards();
+
+            // 2. Add cards to the UI
+            UICtrl.displayGameBoardCards(memCtrl.getGameBoardCards());
+
+            // 3. Set message
+            setGameMessage("Click a tile to start");
+        });
+
+        // When each card was clicked
+        document.getElementById(DOM.gameBoard).addEventListener("click", function(event) {
+
+            if (event.target.nodeName === "IMG" && !gameBoardData.gameIsFinished) {
+                // 1. Get card id
+                var cardId = event.target.id.split("-");
+
+                var ID = cardId[1];
+
+                // 2. Update the card image in UI
+                var imageToShow = memCtrl.showCard(ID);
+                
+                // We allowed to see just two images each time
+                if (!isNaN(imageToShow) && imageToShow) {
+                    // Our data arrays starts from zero
+                    UICtrl.displayCardImage(imageToShow, gameBoardData.cards[imageToShow - 1].src);
+                }
+                
+                // Two cards were selected
+                else if (gameBoardData.flipArray.length === 2) {                    
+                    checkTwoCards();
+                }
+            }
+        });
+
+        // When reset button was clicked
+        document.getElementById(DOM.resetBtnContainer).addEventListener("click", function() {
+            // 1. Reset game score and isFinished variable
+            memCtrl.resetGame();
+
+            // 2. Reset and start Calculating time
+            resetTime();
+
+            calcTime();
+
+            // 3. Create cards data
+            memCtrl.createGameBoardCards();
+
+            // 4. Add cards to the UI
+            UICtrl.displayGameBoardCards(memCtrl.getGameBoardCards());
+
+            // 5. Set message
+            setGameMessage("Click a tile to start");
+        });
+    };
+
+    var addTime = function() {
+        memCtrl.setScore();
+        time.seconds++;
+
+        if (time.seconds >= 60) {
+            time.seconds = 0;
+
+            time.minutes++;
+
+            if (time.minutes >= 60) {
+                time.minutes = 0;
+
+                time.hours++;
+            }
+        }
+
+        var timeHours = (time.hours ? (time.hours > 9 ? time.hours : "0" + time.hours) : "00"),
+            timeMinutes = (time.minutes ? (time.minutes > 9 ? time.minutes : "0" + time.minutes) : "00"),
+            timeSecond = (time.seconds > 9 ? time.seconds : "0" + time.seconds),
+
+            formatTime = timeHours + DOM.timeDelimiter + timeMinutes + DOM.timeDelimiter + timeSecond;
+
+        UICtrl.displayTime(formatTime);
+
+        calcTime();
+    };
+        
+    var hideCards = function() {        
+        if(gameBoardData.timerReset === 1) {            
+            // 1. Hide cards image in the UI and set it the default
+            UICtrl.hideCardImage(gameBoardData.flipArray[0].name);
+            UICtrl.hideCardImage(gameBoardData.flipArray[1].name);
+
+            // 2. Reset flip array
+            memCtrl.resetFlip();
+        }
+    };    
 
     return {
         init: function () {
