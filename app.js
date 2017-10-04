@@ -222,6 +222,44 @@ var projectController = (function(memCtrl, UICtrl) {
         clearInterval(gameBoardData.messageTimer);
     };
 
+    var addTime = function() {
+        memCtrl.setScore();
+        time.seconds++;
+
+        if (time.seconds >= 60) {
+            time.seconds = 0;
+
+            time.minutes++;
+
+            if (time.minutes >= 60) {
+                time.minutes = 0;
+
+                time.hours++;
+            }
+        }
+
+        var timeHours = (time.hours ? (time.hours > 9 ? time.hours : "0" + time.hours) : "00"),
+            timeMinutes = (time.minutes ? (time.minutes > 9 ? time.minutes : "0" + time.minutes) : "00"),
+            timeSecond = (time.seconds > 9 ? time.seconds : "0" + time.seconds),
+
+            formatTime = timeHours + DOM.timeDelimiter + timeMinutes + DOM.timeDelimiter + timeSecond;
+
+        UICtrl.displayTime(formatTime);
+
+        calcTime();
+    };
+
+    var hideCards = function() {
+        if(gameBoardData.timerReset === 1) {
+            // 1. Hide cards image in the UI and set it the default
+            UICtrl.hideCardImage(gameBoardData.flipArray[0].name);
+            UICtrl.hideCardImage(gameBoardData.flipArray[1].name);
+
+            // 2. Reset flip array
+            memCtrl.resetFlip();
+        }
+    };
+
     var checkTwoCards = function () {
         // Cards are not equal
         if (memCtrl.checkCardsAreEqual() ) {
@@ -325,44 +363,6 @@ var projectController = (function(memCtrl, UICtrl) {
             setGameMessage("Click a tile to start");
         });
     };
-
-    var addTime = function() {
-        memCtrl.setScore();
-        time.seconds++;
-
-        if (time.seconds >= 60) {
-            time.seconds = 0;
-
-            time.minutes++;
-
-            if (time.minutes >= 60) {
-                time.minutes = 0;
-
-                time.hours++;
-            }
-        }
-
-        var timeHours = (time.hours ? (time.hours > 9 ? time.hours : "0" + time.hours) : "00"),
-            timeMinutes = (time.minutes ? (time.minutes > 9 ? time.minutes : "0" + time.minutes) : "00"),
-            timeSecond = (time.seconds > 9 ? time.seconds : "0" + time.seconds),
-
-            formatTime = timeHours + DOM.timeDelimiter + timeMinutes + DOM.timeDelimiter + timeSecond;
-
-        UICtrl.displayTime(formatTime);
-
-        calcTime();
-    };
-        
-    var hideCards = function() {        
-        if(gameBoardData.timerReset === 1) {            
-            // 1. Hide cards image in the UI and set it the default
-            UICtrl.hideCardImage(gameBoardData.flipArray[0].name);
-            UICtrl.hideCardImage(gameBoardData.flipArray[1].name);
-
-            // 2. Reset flip array
-            memCtrl.resetFlip();
-        }
-    };    
 
     return {
         init: function () {
