@@ -222,6 +222,10 @@ var projectController = (function(memCtrl, UICtrl) {
         clearInterval(gameBoardData.messageTimer);
     };
 
+    var calcTime = function() {
+        fullTime = setTimeout(addTime, 1000);
+    };
+
     var addTime = function() {
         memCtrl.setScore();
         time.seconds++;
@@ -299,10 +303,6 @@ var projectController = (function(memCtrl, UICtrl) {
             minutes: 0,
             seconds: 0
         };
-    };
-
-    var calcTime = function() {
-        fullTime = setTimeout(addTime, 1000);
     };
 
     var eventHandler = function() {
