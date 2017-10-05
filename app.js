@@ -197,7 +197,7 @@ var UIController = (function() {
         getDOM: function() {
             return DOMStrings;
         }
-    }
+    };
 
 })();
 
